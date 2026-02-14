@@ -13,3 +13,13 @@ from sklearn.impute import SimpleImputer
 from sklearn.metrics import f1_score, classification_report, confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+
+def load_data():
+    train = pd.read_csv("course_project_train.csv")
+    test = pd.read_csv("course_project_test.csv")
+    return train, test
+
+train, test = load_data()
+
+train.head()
+train.info()
