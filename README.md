@@ -31,7 +31,7 @@ The training set contains 7,500 borrower records with 17 features:
 - **Class imbalance**: 72% non-defaults vs. 28% defaults (see distribution below).
 - **Outliers**: Extreme values in loan amounts and credit limits required robust scaling.
 
-![Target class distribution showing 72% non-defaults vs 28% defaults](images/target_distribution.png)
+![alt text](Figure_2.png)
 
 ## Approach
 
@@ -63,7 +63,7 @@ We tested three approaches:
 - Logistic Regression: best threshold = 0.46
 - Random Forest: best threshold = 0.44
 
-![Correlation matrix showing relationships between features and target](images/correlation_matrix.png)
+![alt text](Figure_1-1.png)
 
 ## Results
 
@@ -77,7 +77,7 @@ All production models exceeded the F1 > 0.5 requirement. Random Forest delivered
 
 The custom implementation underperformed due to convergence issues with imbalanced data—a reminder that battle-tested libraries incorporate years of optimization we'd otherwise need to rebuild.
 
-![Confusion matrix for Random Forest showing 245 true positives and 178 false negatives](images/confusion_matrix_rf.png)
+![alt text](Figure_3.png)
 
 **Feature importance** (Random Forest) revealed what drives default risk:
 
