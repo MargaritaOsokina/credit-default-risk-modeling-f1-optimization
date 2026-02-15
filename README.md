@@ -93,3 +93,36 @@ This aligns with lending intuition: credit history and exposure size dominate ri
 - **Simple imputation worked**: Median/mode strategies sufficed; complex imputation didn't meaningfully improve results.
 - **Credit Score dominates**: No surprise here—it's the industry standard for good reason. But loan amount and term structure provided meaningful secondary signals.
 - **Custom ≠ better**: Our from-scratch logistic regression scored 0.383 F1 versus 0.535 for scikit-learn's implementation. Production systems should leverage optimized libraries unless specific needs justify custom work.
+
+## Running the Code
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Train models and generate predictions
+python predict.py --train data/course_project_train.csv \
+                  --test data/course_project_test.csv \
+                  --output submission.csv
+```
+
+The script outputs `submission.csv` with 2,500 predictions formatted for submission:
+
+```
+Id,Credit Default
+0,1
+1,0
+2,1
+...
+2499,0
+```
+
+## Final Notes
+
+This project delivers a production-ready pipeline that:
+- Handles real-world data issues (missing values, imbalance)
+- Optimizes for the right metric (F1 for minority class)
+- Provides interpretable results (feature importance)
+- Includes a custom implementation for educational comparison
+
+The Random Forest model with threshold tuning (F1 = 0.538) meets project requirements while offering transparency into what drives default risk—a balance lenders actually need in practice.
