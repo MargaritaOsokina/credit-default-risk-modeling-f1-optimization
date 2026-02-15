@@ -1,5 +1,3 @@
-Credit Default Risk Modeling Using Machine Learning
-
 # Credit Default Risk Modeling with F1 Optimization
 
 ## Overview
