@@ -1,118 +1,98 @@
-# Credit default prediction project
+# Credit Default Prediction
 
-## Project description
+## Project Overview
 
-The objective of this project is to build machine learning models to predict credit default based on client financial and demographic information.
+This project focuses on predicting credit default (non-payment of debt obligations) using machine learning models. The goal is to build and compare various classification models to identify clients at risk of defaulting on their current loans.
 
-The task is formulated as a binary classification problem where:
-- **1** — client defaults on the loan
-- **0** — client does not default
+## Problem Statement
 
-Models are trained on the training dataset and evaluated using validation data. Final predictions are generated for the test dataset.
+Using historical client data, we need to build predictive models (Logistic Regression, Decision Trees, Random Forest, and Gradient Boosting) to forecast credit default. The models are trained on the provided training dataset and evaluated on a test dataset.
 
-## Dataset description
+## Dataset Description
 
-The dataset contains information about borrowers, including both numerical and categorical features.
+### Target Variable
 
-**Features:**
-- Home ownership
-- Annual income
-- Years in current job
-- Tax liens
-- Number of open accounts
-- Years of credit history
-- Maximum open credit
-- Number of credit problems
-- Months since last delinquent
-- Bankruptcies
-- Purpose of loan
-- Term
-- Current loan amount
-- Current credit balance
-- Monthly debt
-- Credit score
+- **Credit Default**: Binary indicator (1 - default occurs, 0 - no default)
 
-**Target variable:**
-- **Credit Default** — indicates whether the borrower defaulted on the loan.
+### Features
 
-## Evaluation metrics
+- **Home Ownership**: Type of housing ownership (Own Home, Rent, Home Mortgage)
+- **Annual Income**: Yearly income of the borrower
+- **Years in current job**: Years employed at current workplace
+- **Tax Liens**: Presence of tax obligations or debts
+- **Number of Open Accounts**: Total number of open accounts (credit cards, credit lines, etc.)
+- **Years of Credit History**: Total duration of credit history in years
+- **Maximum Open Credit**: Maximum credit line provided to borrower
+- **Number of Credit Problems**: Count of credit issues (late payments, collections)
+- **Months since last delinquent**: Months since last payment default
+- **Bankruptcies**: Number of bankruptcies in credit history
+- **Purpose**: Loan purpose (debt consolidation, etc.)
+- **Term**: Loan term (Short Term/Long Term)
+- **Current Loan Amount**: Current outstanding loan amount
+- **Current Credit Balance**: Current credit balance across all accounts
+- **Monthly Debt**: Total monthly debt payments
+- **Credit Score**: Credit score indicating creditworthiness
 
-The following metrics were used to evaluate model performance:
-- **F1-score** (primary metric for the imbalanced default class)
-- **ROC-AUC**
-- **Gini coefficient**
+## Solution Structure
 
-The Gini coefficient was calculated as:
+### 1. Exploratory Data Analysis (EDA)
 
-\[
-\text{Gini} = 2 \times \text{ROC-AUC} - 1
-\]
+- Target variable distribution analysis
+- Missing values identification and visualization
+- Numerical features distribution analysis
+- Correlation analysis with heatmaps
+- Categorical features distribution analysis
 
-The main requirement of the project is:
+### 2. Data Preprocessing
 
-> **F1-score > 0.5 for the default class (class 1).**
+- Stratified train/validation split (80/20)
+- Numerical features: Median imputation + StandardScaler
+- Categorical features: Most frequent imputation + OneHotEncoder
+- ColumnTransformer for unified preprocessing
 
-## Exploratory data analysis
+### 3. Modeling
 
-During the exploratory data analysis (EDA), the following steps were performed:
-- Analysis of dataset shape and structure
-- Target distribution analysis (class imbalance detection)
-- Missing values analysis
-- Distribution analysis of numerical features
-- Correlation matrix analysis
-- Categorical feature distribution analysis
-- Relationship between features and target variable
+**Models Implemented:**
 
-The dataset shows **class imbalance**, which required the use of class weighting in the models. Several numerical features contain outliers, which were handled implicitly by tree-based models.
+- Logistic Regression (baseline)
+- Decision Tree
+- Random Forest (with hyperparameter tuning)
+- XGBoost
 
-## Data preprocessing
+### 4. Model Evaluation
 
-The following preprocessing steps were applied:
-- **Missing values imputation**:
-  - Median strategy for numerical features
-  - Most frequent strategy for categorical features
-- **Standard scaling** for numerical variables
-- **One-hot encoding** for categorical variables
-- **Stratified train-validation split** to preserve class distribution
+**Metrics Used:**
 
-All transformations were implemented using a `sklearn` **Pipeline** and `ColumnTransformer` to ensure reproducibility and prevent data leakage.
+- **F1-score**: Primary metric (> 0.5 required)
+- **ROC-AUC**: Area Under the ROC Curve
+- **Gini**: Calculated as 2*ROC-AUC - 1
 
-## Models used
+### 5. Hyperparameter Tuning
 
-The following models were implemented and compared:
-1. **Logistic regression** (baseline model)
-2. **Decision tree**
-3. **Random forest**
-4. **XGBoost** (gradient boosting)
+GridSearchCV for Random Forest:
 
-Hyperparameter tuning was performed for the Random Forest model using `GridSearchCV`.
-
-## Model comparison
-
-All models were evaluated using the metrics mentioned above. Below is a comparison of their performance:
-
-| Model               | F1-score (class 1) | ROC-AUC | Gini |
-|---------------------|---------------------|---------|------|
-| Logistic Regression | 0.68                 | 0.84     | 0.68  |
-| Decision Tree       | 0.71                 | 0.86     | 0.72  |
-| Random Forest       | 0.77                 | 0.91     | 0.82  |
-| XGBoost             | 0.79                 | 0.93     | 0.86  |
-
-Tree-based ensemble models demonstrated better performance compared to the linear baseline model.
-
-## Final model
-
-The final model was selected based on the highest **F1-score** on the validation dataset. The chosen model was used to generate predictions for the test dataset, and a submission file was created containing predictions for all test observations.
-
-## Key conclusions
-
-- Class imbalance significantly affects model performance.
-- Using `class_weight` improved recall for the default class.
-- Ensemble methods outperformed logistic regression.
-- Gradient boosting showed strong and stable performance.
-
-The project demonstrates a complete machine learning pipeline, including EDA, preprocessing, model development, evaluation, and final prediction generation.
+- `n_estimators`: [200, 400]
+- `max_depth`: [4, 6, 8]
+- Scoring: F1-score with 5-fold cross-validation
 
 ## Results
 
-> 🟢 The final F1-score for the default class (class 1) exceeded the required threshold of **0.5**, satisfying the main project criterion.
+| Model | F1 Score | ROC-AUC | Gini |
+|-------|----------|---------|------|
+| Random Forest | **0.531** | **0.762** | **0.523** |
+| Decision Tree | 0.525 | 0.740 | 0.479 |
+| Logistic Regression | 0.517 | 0.754 | 0.508 |
+| XGBoost | 0.444 | 0.744 | 0.487 |
+
+**Best Model:** Random Forest achieved the highest F1-score of 0.531, meeting the project requirement of F1 > 0.5.
+
+## Key Insights
+
+1. **Class Imbalance**: The dataset shows class imbalance with ~28% default cases, requiring balanced class weights in modeling
+2. **Missing Values**: Several features contain missing values, handled through appropriate imputation strategies
+3. **Feature Importance**: Credit Score, Current Loan Amount, and Annual Income show strong correlation with default
+4. **Model Performance**: Ensemble methods (Random Forest) outperformed simpler models, though all except XGBoost met the F1 > 0.5 threshold
+
+## Conclusion
+
+The Random Forest model with tuned hyperparameters provides the best performance for predicting credit default, achieving an F1-score of 0.531. The complete ML pipeline includes thorough EDA, preprocessing, modeling, and evaluation stages, meeting all project requirements.
