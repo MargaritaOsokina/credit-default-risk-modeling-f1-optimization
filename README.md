@@ -1,98 +1,82 @@
-# Credit Default Prediction
+# Credit Default Prediction - Machine Learning Project
+This project focuses on building a robust machine learning model to predict the likelihood of a borrower defaulting on a loan (credit default). It's a classic binary classification problem in the financial sector. The workflow covers everything from initial data exploration and feature engineering to training, evaluating, and comparing multiple models, including custom implementations of core algorithms.
 
-## Project Overview
+## 📖 Table of Contents
+- [Project Goal](#project-goal)
+- [Dataset](#dataset)
+- [Methodology & Workflow](#methodology--workflow)
+- [Key Features Engineered](#key-features-engineered)
+- [Models Used](#models-used)
+- [Evaluation & Results](#evaluation--results)
+- [Getting Started](#getting-started)
+- [Conclusion](#conclusion)
 
-This project focuses on predicting credit default (non-payment of debt obligations) using machine learning models. The goal is to build and compare various classification models to identify clients at risk of defaulting on their current loans.
+##  Project Goal
+The primary objective is to develop a predictive model that accurately identifies loan applicants who are at a high risk of default. This is a crucial task for financial institutions to manage risk and make informed lending decisions. The main evaluation metric is the **F1-score**, which provides a balanced measure of precision and recall, especially important given the inherent class imbalance in such datasets.
 
-## Problem Statement
+##  Dataset
+The dataset contains anonymized information about loan applicants. The training set (`course_project_train.csv`) includes the target variable `Credit Default` (0 for no default, 1 for default), while the test set (`course_project_test.csv`) is provided without labels for final predictions.
 
-Using historical client data, we need to build predictive models (Logistic Regression, Decision Trees, Random Forest, and Gradient Boosting) to forecast credit default. The models are trained on the provided training dataset and evaluated on a test dataset.
+**Features include:**
+*   **Demographic & Financial:** `Home Ownership`, `Annual Income`
+*   **Credit History:** `Credit Score`, `Years of Credit History`, `Number of Credit Problems`, `Bankruptcies`, `Months since last delinquent`
+*   **Loan Details:** `Purpose`, `Term`, `Current Loan Amount`
+*   **Account Information:** `Number of Open Accounts`, `Maximum Open Credit`, `Current Credit Balance`, `Monthly Debt`, `Tax Liens`
 
-## Dataset Description
+##  Methodology & Workflow
+The project follows a structured machine learning pipeline:
 
-### Target Variable
+1.  **Exploratory Data Analysis (EDA):**
+    *   Analyzed target variable distribution, revealing a **class imbalance** (approx. 28% default rate).
+    *   Visualized feature distributions and identified significant outliers (e.g., in `Current Loan Amount`).
+    *   Examined feature correlations to check for multicollinearity.
+    *   Analyzed categorical features and identified missing values.
 
-- **Credit Default**: Binary indicator (1 - default occurs, 0 - no default)
+2.  **Data Preprocessing:**
+    *   **`StratifiedShuffleSplit`** was used to create a validation set while preserving the class distribution of the target variable.
+    *   A `ColumnTransformer` with separate `Pipeline`s was built for numerical and categorical data to prevent data leakage.
+    *   **Numerical Pipeline:** `SimpleImputer` (median) → `PowerTransformer` (Yeo-Johnson) → `StandardScaler`.
+    *   **Categorical Pipeline:** `SimpleImputer` (most frequent) → `OneHotEncoder`.
 
-### Features
+3.  **Feature Engineering:**
+    *   New, highly informative features were created to improve model performance (see section below).
 
-- **Home Ownership**: Type of housing ownership (Own Home, Rent, Home Mortgage)
-- **Annual Income**: Yearly income of the borrower
-- **Years in current job**: Years employed at current workplace
-- **Tax Liens**: Presence of tax obligations or debts
-- **Number of Open Accounts**: Total number of open accounts (credit cards, credit lines, etc.)
-- **Years of Credit History**: Total duration of credit history in years
-- **Maximum Open Credit**: Maximum credit line provided to borrower
-- **Number of Credit Problems**: Count of credit issues (late payments, collections)
-- **Months since last delinquent**: Months since last payment default
-- **Bankruptcies**: Number of bankruptcies in credit history
-- **Purpose**: Loan purpose (debt consolidation, etc.)
-- **Term**: Loan term (Short Term/Long Term)
-- **Current Loan Amount**: Current outstanding loan amount
-- **Current Credit Balance**: Current credit balance across all accounts
-- **Monthly Debt**: Total monthly debt payments
-- **Credit Score**: Credit score indicating creditworthiness
+4.  **Modeling & Evaluation:**
+    *   Trained and evaluated a diverse set of models, including custom-built algorithms for educational purposes.
+    *   Used **F1-score** as the primary metric due to class imbalance, alongside **ROC-AUC** and **Gini**.
+    *   Performed hyperparameter tuning using **`GridSearchCV`** for the scikit-learn Random Forest.
 
-## Solution Structure
+5.  **Final Prediction:**
+    *   The best-performing model was selected to generate predictions on the unseen test set and saved to a submission file.
 
-### 1. Exploratory Data Analysis (EDA)
+##  Key Features Engineered
+New features were created to capture complex relationships in the data:
+*   **`DTI` (Debt-to-Income):** `Monthly Debt * 12 / Annual Income`. A standard measure of financial health.
+*   **`Negative_Records`:** Sum of `Bankruptcies`, `Number of Credit Problems`, and `Tax Liens`. A simple aggregate of negative credit events.
+*   **`Credit_Utilization`:** `Current Credit Balance / Maximum Open Credit`. Indicates how much of their available credit the borrower is using.
+*   **`Loan_to_Income`:** `Current Loan Amount / Annual Income`. Another measure of debt burden relative to income.
+*   **`Score_Category`:** Categorizes the `Credit Score` into 'Poor', 'Fair', 'Good', and 'Excellent' buckets.
 
-- Target variable distribution analysis
-- Missing values identification and visualization
-- Numerical features distribution analysis
-- Correlation analysis with heatmaps
-- Categorical features distribution analysis
+##  Models Used
+The project implemented and compared the following classifiers:
+*   **Baseline:** `LogisticRegression`
+*   **Tree-Based:** `DecisionTreeClassifier`
+*   **Ensemble:** `RandomForestClassifier` (from scikit-learn)
+*   **Gradient Boosting:** `XGBClassifier`
+*   **Custom Implementations:**
+    *   `MyRandomForest`: A Random Forest built from scratch using custom decision trees.
+    *   `MyGradientBoostingClassifier`: A Gradient Boosting model built from scratch using scikit-learn's regression trees.
 
-### 2. Data Preprocessing
+##  Evaluation & Results
+The models were evaluated on a held-out validation set. Here is a summary of their performance:
 
-- Stratified train/validation split (80/20)
-- Numerical features: Median imputation + StandardScaler
-- Categorical features: Most frequent imputation + OneHotEncoder
-- ColumnTransformer for unified preprocessing
+| Model                 |   F1-Score |   ROC-AUC |   Gini |
+|:----------------------|-----------:|----------:|-------:|
+| **Random Forest (sklearn)** |   0.5365   |   0.7573  | 0.5147 |
+| Logistic Regression   |   0.5238   |   0.7470  | 0.4940 |
+| Decision Tree         |   0.5132   |   0.7423  | 0.4847 |
+| XGBoost               |   0.4363   |   0.7609  | 0.5219 |
+| Custom GBM            |   0.4101   |   0.7568  | 0.5136 |
 
-### 3. Modeling
-
-**Models Implemented:**
-
-- Logistic Regression (baseline)
-- Decision Tree
-- Random Forest (with hyperparameter tuning)
-- XGBoost
-
-### 4. Model Evaluation
-
-**Metrics Used:**
-
-- **F1-score**: Primary metric (> 0.5 required)
-- **ROC-AUC**: Area Under the ROC Curve
-- **Gini**: Calculated as 2*ROC-AUC - 1
-
-### 5. Hyperparameter Tuning
-
-GridSearchCV for Random Forest:
-
-- `n_estimators`: [200, 400]
-- `max_depth`: [4, 6, 8]
-- Scoring: F1-score with 5-fold cross-validation
-
-## Results
-
-| Model | F1 Score | ROC-AUC | Gini |
-|-------|----------|---------|------|
-| Random Forest | **0.531** | **0.762** | **0.523** |
-| Decision Tree | 0.525 | 0.740 | 0.479 |
-| Logistic Regression | 0.517 | 0.754 | 0.508 |
-| XGBoost | 0.444 | 0.744 | 0.487 |
-
-**Best Model:** Random Forest achieved the highest F1-score of 0.531, meeting the project requirement of F1 > 0.5.
-
-## Key Insights
-
-1. **Class Imbalance**: The dataset shows class imbalance with ~28% default cases, requiring balanced class weights in modeling
-2. **Missing Values**: Several features contain missing values, handled through appropriate imputation strategies
-3. **Feature Importance**: Credit Score, Current Loan Amount, and Annual Income show strong correlation with default
-4. **Model Performance**: Ensemble methods (Random Forest) outperformed simpler models, though all except XGBoost met the F1 > 0.5 threshold
-
-## Conclusion
-
-The Random Forest model with tuned hyperparameters provides the best performance for predicting credit default, achieving an F1-score of 0.531. The complete ML pipeline includes thorough EDA, preprocessing, modeling, and evaluation stages, meeting all project requirements.
+##  Conclusion
+This project successfully demonstrates a complete end-to-end machine learning workflow for credit default prediction. Through careful feature engineering and model comparison, a tuned **Random Forest classifier** was identified as the most effective model based on the F1-score. The notebook also showcases a deep understanding of algorithms by implementing custom versions of Random Forest and Gradient Boosting.
