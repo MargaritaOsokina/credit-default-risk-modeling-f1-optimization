@@ -67,16 +67,16 @@ The project implemented and compared the following classifiers:
     *   `MyRandomForest`: A Random Forest built from scratch using custom decision trees.
     *   `MyGradientBoostingClassifier`: A Gradient Boosting model built from scratch using scikit-learn's regression trees.
 
-##  Evaluation & Results
-The models were evaluated on a held-out validation set. Here is a summary of their performance:
+## Evaluation & Result
 
-| Model                 |   F1-Score |   ROC-AUC |   Gini |
-|:----------------------|-----------:|----------:|-------:|
-| **Random Forest (sklearn)** |   0.5365   |   0.7573  | 0.5147 |
-| Logistic Regression   |   0.5238   |   0.7470  | 0.4940 |
-| Decision Tree         |   0.5132   |   0.7423  | 0.4847 |
-| XGBoost               |   0.4363   |   0.7609  | 0.5219 |
-| Custom GBM            |   0.4101   |   0.7568  | 0.5136 |
+| Model                 |   F1-Score |   ROC-AUC |     Gini |
+|:----------------------|-----------:|----------:|---------:|
+| Random Forest (sklearn) |   0.5365   |   0.7573  |   0.5147 |
+| Logistic Regression   |   0.5238   |   0.7470  |   0.4940 |
+| Decision Tree         |   0.5132   |   0.7423  |   0.4847 |
+| XGBoost               |   0.4363   |   0.7609  |   0.5219 |
+| Custom GBM            |   0.4101   |   0.7568  |   0.5136 |
+| My Random Forest (custom) |   0.3089   |   0.7291  |   0.4582 |
 
 ##  Conclusion
 This project successfully demonstrates a complete end-to-end machine learning workflow for credit default prediction. Through careful feature engineering and model comparison, a tuned **Random Forest classifier** was identified as the most effective model based on the F1-score. The notebook also showcases a deep understanding of algorithms by implementing custom versions of Random Forest and Gradient Boosting.
